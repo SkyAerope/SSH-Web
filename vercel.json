@@ -9,8 +9,17 @@
     "routes": [
       {
         "src": "/(.*)",
-        "dest": "/app.js"
+        "dest": "/app.js",
+        "methods": ["GET", "POST"],
+        "headers": {
+          "x-vercel-serverless-handler": "true",
+          "x-vercel-ignore": "false"
+        },
+        "continue": true
       }
-    ]
+    ],
+    "env": {
+      "VERCEL_REQUEST_MAX_DURATION": "180"
+    }
   }
   
