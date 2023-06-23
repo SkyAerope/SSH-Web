@@ -28,6 +28,7 @@
 
 ### PaaS 平台部署
 已测试在Vercel平台部署，执行时会造成504错误，尚未修复此错误。
+已测试在render平台部署，可正常使用，DEMO地址：https://ssh-web.onrender.com/
 
 亦可测试自行部署到其他平台
 
