@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "ansi-html": "^0.0.9",
     "express": "^4.18.2",
     "socket.io": "^4.7.0",
     "ssh2": "^1.14.0",
