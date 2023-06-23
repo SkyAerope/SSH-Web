@@ -20,6 +20,10 @@ app.get('/main.css', (req, res) => {
     res.sendFile(__dirname + '/main.css');
 });
 
+app.get('/favicon.svg', (req, res) => {
+    res.sendFile(__dirname + '/favicon.svg');
+});
+
 // 不需要猫咪背景图片了~
 // app.get('/cat.jpg', (req, res) => {
 //     res.sendFile(__dirname + '/cat.jpg');
@@ -46,6 +50,7 @@ io.on('connection', (socket) => {
 
         stream.on('close', (code, signal) => {
           conn.end();
+          socket.disconnect(); // 断开连接
         }).on('data', (data) => {
           socket.emit('output', data.toString());
         }).stderr.on('data', (data) => {
