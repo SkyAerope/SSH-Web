@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no"/>
+    <meta name="renderer" content="webkit"/>
+    <meta name="force-rendering" content="webkit"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+
+    <!-- MDUI CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/mdui@1.0.2/dist/css/mdui.min.css"/>
+    <link rel="stylesheet" href="main.css"/>
+    <title>SSH命令执行</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      const socket = io();
+
+      socket.on('connect', () => {
+        console.log('实时连接建立');
+        // mdui snackbar
+        mdui.snackbar({
+          message: '实时连接建立',
+          position: 'top'
+        });
+      });
+
+      //连接断开
+      socket.on('disconnect', () => {
+        console.log('实时连接断开');
+        // mdui snackbar
+        mdui.snackbar({
+          message: '实时连接断开',
+          position: 'top'
+        });
+      });
+
+      socket.on('output', (data) => {
+        //将data中的\n替换为<br>
+        data = data.replace(/\n/g, '<br>');
+        document.getElementById('output').innerHTML += data;
+      });
+
+      function executeCommand() {
+        const host = document.getElementById('host').value;
+        const port = document.getElementById('port').value;
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+        const command = document.getElementById('command').value;
+        document.getElementById('output').innerHTML = '';
+
+        socket.emit('execute', command, host, port, username, password);
+      }
+    </script>
+  </head>
+  <body class="mdui-theme-primary-teal mdui-theme-accent-blue mdui-theme-layout-auto">
+    <div class="mdui-appbar">
+      <div class="mdui-toolbar mdui-color-theme">
+        <a href="/" class="mdui-typo-title">SSH命令执行</a>
+      </div>
+    </div>
+  <div class="mdui-container">
+    <div class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-8 mdui-col-sm-10">
+      <i class="mdui-icon material-icons">computer</i>
+      <label class="mdui-textfield-label">主机</label>
+      <input class="mdui-textfield-input" type="text" id="host" required/>
+    </div>
+    <div class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-4 mdui-col-sm-2">
+      <i class="mdui-icon material-icons">vpn_key</i>
+      <label class="mdui-textfield-label">端口</label>
+      <input class="mdui-textfield-input" type="text" id="port" value="22" required/>
+    </div>
+    <div class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12 mdui-col-sm-12">
+      <i class="mdui-icon material-icons">account_circle</i>
+      <label class="mdui-textfield-label">用户名</label>
+      <input class="mdui-textfield-input" type="text" id="username" required/>
+    </div>
+    <div class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12 mdui-col-sm-12">
+      <i class="mdui-icon material-icons">vpn_key</i>
+      <label class="mdui-textfield-label">密码</label>
+      <input class="mdui-textfield-input" type="password" id="password" required/>
+    </div>
+    <!--记住密码选项-->
+      <div class="mdui-m-l-3">
+        <label class="mdui-checkbox">
+          <input type="checkbox" id="rempwd" >
+          <i class="mdui-checkbox-icon"></i>
+          记住密码
+        </label>
+      </div>
+  </div>
+
+  <div class="mdui-container">
+    <div class="mdui-row mdui-valign">
+      <div class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12 mdui-col-sm-11 mdui-float-left">
+        <i class="mdui-icon material-icons">code</i>
+        <label class="mdui-textfield-label">命令</label>
+        <input class="mdui-textfield-input" type="text" id="command" required/>
+      </div>
+      <button class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent mdui-hidden-xs mdui-col-sm-1 mdui-center mdui-m-t-3" onclick="executeCommand()">执行</button>
+    </div>
+    <!--手机端执行按钮-->
+    <button class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent mdui-hidden-sm-up mdui-col-xs-12 mdui-center" onclick="executeCommand()">执行</button>
+    </div>
+    <p></p>
+  <div class="mdui-container mdui-typo">
+    <div class="mdui-typo-caption-opacity">将使用wss协议加密传输</div>
+    <div class="mdui-typo-headline mdui-m-l-2">输出</div>
+
+    <div class="mdui-card mdui-center">
+      <div class="mdui-card-content">
+        <!-- <div class="mdui-card-primary-title">输出</div> -->
+        <div class="mdui-card-content">
+          <code id="output"></code>
+        </div>
+      </div>
+    </div>
+
+  </div>
+    <!-- MDUI JavaScript -->
+    <script src="https://unpkg.com/mdui@1.0.2/dist/js/mdui.min.js"></script>
+
+  <!-- 将用户输入存到cookie -->
+  <script>
+    function setCookie(cname, cvalue, exdays) {
+      const d = new Date();
+      d.setTime(d.getTime() + (exdays*24*60*60*1000));
+      const expires = "expires="+ d.toUTCString();
+      document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+    }
+
+    function getCookie(cname) {
+      const name = cname + "=";
+      const ca = document.cookie.split(';');
+      for(let i = 0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) === ' ') {
+          c = c.substring(1);
+        }
+        if (c.indexOf(name) === 0) {
+          return c.substring(name.length, c.length);
+        }
+      }
+      return "";
+    }
+
+  // 读取cookie并显示至网页
+    document.getElementById('host').value = getCookie('host');
+    // 如果不存在port，就设置为22，否则从cookie获取
+    if (getCookie('port') === '') {
+      setCookie('port', '22', 365);
+    } else {
+      document.getElementById('port').value = getCookie('port');
+    }
+    document.getElementById('username').value = getCookie('username');
+    // 如果勾选了记住密码，就执行从cookie获取密码
+    if (getCookie('rempwd') === 'true') {
+      document.getElementById('password').value = getCookie('password');
+    }
+    //如果上次勾选了记住密码，就继续勾选
+    if (getCookie('rempwd') === 'true') {
+      document.getElementById('rempwd').checked = true;
+    }
+    document.getElementById('command').value = getCookie('command');
+
+  // 从网页输入写入cookie
+    document.getElementById('host').onchange = () => {
+      setCookie('host', document.getElementById('host').value, 365);
+    };
+    document.getElementById('port').onchange = () => {
+      setCookie('port', document.getElementById('port').value, 365);
+    };
+    document.getElementById('username').onchange = () => {
+      setCookie('username', document.getElementById('username').value, 365);
+    };
+    // 如果勾选了记住密码，就保存密码
+    document.getElementById('password').onchange = () => {
+      if (document.getElementById('rempwd').checked) {
+        setCookie('password', document.getElementById('password').value, 365);
+      }
+    };
+    // 如果刚刚勾选了记住密码，就先保存密码
+    document.getElementById('rempwd').onchange = () => {
+      if (document.getElementById('rempwd').checked) {
+        //二次确认弹窗
+        mdui.confirm('<p class="mdui-text-color-red">请注意，密码将以明文形式存储在本地cookie中，如果您的设备被他人使用，您的密码可能会泄露。</p>', '确认记住密码？', () => {}, 
+          () => {
+            // 选择取消则取消打勾
+            document.getElementById('rempwd').checked = false;
+            setCookie('rempwd', 'false', 365);
+            setCookie('password', '', 365);
+          }, {confirmText: '确认', cancelText: '取消'
+        });
+
+        setCookie('rempwd', 'true', 365);
+        setCookie('password', document.getElementById('password').value, 365);
+      } else {
+        setCookie('rempwd', 'false', 365);
+        setCookie('password', '', 365);
+      }
+    };
+    // // 选择取消则取消打勾
+    // function CancelRemPwd(){
+    // document.getElementById('rempwd').checked = false;
+    //         setCookie('rempwd', 'false', 365);
+    //         setCookie('password', '', 365);
+    // }
+
+    document.getElementById('command').onchange = () => {
+      setCookie('command', document.getElementById('command').value, 365);
+    };
+  </script>
+  </body>
+</html>
