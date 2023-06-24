@@ -42,6 +42,10 @@ a{text-decoration:none;color:#333;}.mdui-theme-layout-dark a{color:#fff;}
     border-radius: 0.6rem !important;
     background-color: #fafafaa3 !important;
 }
+.mdui-panel-item{
+    border-radius: 0.6rem !important;
+    background-color: #fafafaa3 !important;
+}
 /* snackbar */
 .mdui-snackbar{
 border-radius: 10px !important;

