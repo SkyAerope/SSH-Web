@@ -2,6 +2,7 @@ const express = require('express');
 const { Client } = require('ssh2');
 const http = require('http');
 const socketIO = require('socket.io');
+const ansiHTML = require('ansi-html');
 
 const app = express();
 const server = http.createServer(app);
@@ -52,9 +53,9 @@ io.on('connection', (socket) => {
           conn.end();
           socket.disconnect(); // 断开连接
         }).on('data', (data) => {
-          socket.emit('output', data.toString());
+          socket.emit('output', ansiHTML(data.toString()));
         }).stderr.on('data', (data) => {
-          socket.emit('output', data.toString());
+          socket.emit('output', ansiHTML(data.toString()));
         });
       });
     });
