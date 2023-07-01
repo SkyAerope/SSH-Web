@@ -1,6 +1,8 @@
 {
   "dependencies": {
     "ansi-html": "^0.0.9",
+    "chartjs-adapter-date-fns": "^3.0.0",
+    "date-fns": "^2.30.0",
     "express": "^4.18.2",
     "socket.io": "^4.7.0",
     "ssh2": "^1.14.0",
