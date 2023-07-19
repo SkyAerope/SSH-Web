@@ -1,6 +1,6 @@
 # SSH 执行命令的 Web 应用
 
-这个项目是一个基于 Node.js 的简单 Web 应用，用于通过 SSH 连接到远程主机并执行命令。此分支**仅保留一个API接口**，用于其他项目调用，不包含前端界面。
+这个项目是一个基于 Node.js 的简单 Web 应用，用于通过 SSH 连接到远程主机并执行命令。此分支是最小精简版本，**仅保留一个API接口**，不包含前端界面。
 
 ## 功能
 
@@ -24,7 +24,12 @@
 5. 使用以下示例命令测试应用功能：
 
    ```bash
-   curl -X POST -d "command=your-command-value" http://your-domain.com/your-post-endpoint
+   curl -X POST -d "command=your-command-value \
+   &host=your-host-value \
+   &port=your-port-value \
+   &username=your-username-value \
+   &password=your-password-value" \
+   http://your-domain.com/your-post-endpoint
    ```
 
 请注意，使用 SSH 功能涉及到安全性和权限等问题，请谨慎处理和验证输入，以防止潜在的安全风险。

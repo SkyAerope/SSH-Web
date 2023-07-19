@@ -11,6 +11,11 @@ app.use(express.urlencoded({ extended: true }));
 
 app.post('/execute', (req, res) => {
   const command = req.body.command;
+  const host = req.body.host;
+  const port = req.body.port;
+  const username = req.body.username;
+  const password = req.body.password;
+  
   const conn = new Client();
 
   conn.on('ready', () => {
